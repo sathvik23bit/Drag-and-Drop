@@ -515,7 +515,17 @@ function stopBackgroundSound() {
   }
 }
 
-audioSettingCheckbox.addEventListener('change', toggleBackgroundAudio);
+audioSettingCheckbox.addEventListener('change', function() {
+  toggleBackgroundAudio();
+  try { localStorage.setItem('dreamdrop_muted', audioSettingCheckbox.checked ? '0' : '1'); } catch(e) {}
+});
+// Restore previous mute preference before first play, so muting truly
+// persists "at any point" — including across page reloads and levels.
+try {
+  if (localStorage.getItem('dreamdrop_muted') === '1') {
+    audioSettingCheckbox.checked = false;
+  }
+} catch(e) {}
 toggleBackgroundAudio()
 
 
@@ -3415,6 +3425,8 @@ document.addEventListener('DOMContentLoaded', function() {
         setTimeout(function() {
           var tb = document.getElementById('game-taskbar');
           if (tb) tb.classList.add('tb-on');
+          var gm = document.getElementById('global-mute-btn');
+          if (gm) gm.classList.add('gm-hidden');
           var ln = document.getElementById('tb-lvl-num');
           if (ln) ln.textContent = targetLevel;
         }, 50);
@@ -3437,6 +3449,8 @@ document.addEventListener('DOMContentLoaded', function() {
     var tb = document.getElementById('game-taskbar');
     if (!tb) return;
     tb.classList.add('tb-on');
+    var gm = document.getElementById('global-mute-btn');
+    if (gm) gm.classList.add('gm-hidden'); // in-level taskbar mute button takes over
     var ln = document.getElementById('tb-lvl-num');
     if (ln) ln.textContent = currentLevel || 1;
     tbSyncPause();
@@ -3445,6 +3459,8 @@ document.addEventListener('DOMContentLoaded', function() {
   function tbHide() {
     var tb = document.getElementById('game-taskbar');
     if (tb) tb.classList.remove('tb-on');
+    var gm = document.getElementById('global-mute-btn');
+    if (gm) gm.classList.remove('gm-hidden'); // back to menu — show it again
   }
 
   function tbSyncPause() {
@@ -3476,7 +3492,39 @@ document.addEventListener('DOMContentLoaded', function() {
       if (tb)  tb.classList.add('snd-off');
       if (img) img.src = 'Images/Common_Images/audio_off.png';
     }
+    syncGlobalMuteIcon();
   };
+
+  // ── Always-visible mute button (menu screen, pre-level) ────────
+  // Shares the same #audio_setting checkbox as the in-level taskbar
+  // button, so toggling either one keeps both in sync.
+  window.globalMuteToggle = function() {
+    var cb = document.getElementById('audio_setting');
+    if (!cb) return;
+    cb.checked = !cb.checked;
+    cb.dispatchEvent(new Event('change'));
+    var tb = document.getElementById('game-taskbar');
+    if (cb.checked) { if (tb) tb.classList.remove('snd-off'); }
+    else            { if (tb) tb.classList.add('snd-off'); }
+    syncGlobalMuteIcon();
+  };
+
+  function syncGlobalMuteIcon() {
+    var cb  = document.getElementById('audio_setting');
+    var btn = document.getElementById('global-mute-btn');
+    var img = document.getElementById('global-mute-icon');
+    var tbImg = document.getElementById('tb-snd-img');
+    if (!cb) return;
+    var onSrc  = 'Images/Common_Images/audio_on.png';
+    var offSrc = 'Images/Common_Images/audio_off.png';
+    if (btn) btn.classList.toggle('gm-muted', !cb.checked);
+    if (img) img.src = cb.checked ? onSrc : offSrc;
+    if (tbImg) tbImg.src = cb.checked ? onSrc : offSrc;
+  }
+  // Keep icon correct on load (in case a previous mute preference was
+  // already applied to the checkbox before this script ran).
+  document.addEventListener('DOMContentLoaded', syncGlobalMuteIcon);
+  setTimeout(syncGlobalMuteIcon, 0);
 
   // ── Pause / Resume — uses the game's own pauseGame/resumeGame ─
   window.tbPause = function() {

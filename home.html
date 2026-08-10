@@ -68,6 +68,14 @@
 
   <h1 id="game-title">Dream Drop</h1>
 
+  <!-- Always-visible mute button — Point 2 fix (proper): the taskbar mute
+       button only appears once a level is running. This one is visible
+       from page load, on the menu screen, before any level starts, so
+       audio can genuinely be muted "at any point while using the app". -->
+  <button id="global-mute-btn" onclick="globalMuteToggle()" title="Mute / Unmute">
+    <img id="global-mute-icon" src="Images/Common_Images/audio_on.png" alt="Sound">
+  </button>
+
   <div class="buttons" id="menu-buttons">
     <button id="easyBtn">Easy</button>
     <button id="mediumBtn">Medium</button>
