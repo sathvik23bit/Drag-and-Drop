@@ -1,33 +1,27 @@
 // =============================================================
-// DREAM DROP — FIREBASE CONFIGURATION
+// FIREBASE CONFIG (placeholder)
 // =============================================================
-// HOW TO SET UP (one-time, done by teacher / admin):
+// This file was referenced by home.html but did not exist, causing
+// a 404 on every page load. The optional Firebase sync code in
+// scriptt.js checks FIREBASE_ENABLED / FIREBASE_CONFIG before doing
+// anything, so leaving this disabled keeps the game fully working
+// offline using localStorage only.
 //
-// 1. Go to https://console.firebase.google.com
-// 2. Click "Add project" → name it "dream-drop" → Create
-// 3. In the project, click "Realtime Database" → Create Database
-//    → choose a location → Start in TEST MODE (for now)
-// 4. Go to Project Settings (gear icon) → Your apps → Add app (Web)
-// 5. Copy the config values below from Firebase and paste them here
-// 6. Save this file — that's it!
-//
-// DATA STRUCTURE in Firebase:
-//   dreamdrop/
-//     players/
-//       {playerId}/
-//         progress/  ← same structure as localStorage
-//         mouseData/ ← level-by-level movement logs
-// =============================================================
+// To enable cloud sync of progress data:
+//   1. Set FIREBASE_ENABLED to true.
+//   2. Fill in FIREBASE_CONFIG with your Firebase project's config
+//      (from the Firebase console: Project settings > General > SDK setup).
+//   3. Add the Firebase SDK <script> tags (app + database) to home.html
+//      BEFORE this file is loaded.
+
+var FIREBASE_ENABLED = false;
 
 var FIREBASE_CONFIG = {
-  apiKey:            "PASTE_YOUR_API_KEY_HERE",
-  authDomain:        "PASTE_YOUR_AUTH_DOMAIN_HERE",
-  databaseURL:       "PASTE_YOUR_DATABASE_URL_HERE",
-  projectId:         "PASTE_YOUR_PROJECT_ID_HERE",
-  storageBucket:     "PASTE_YOUR_STORAGE_BUCKET_HERE",
-  messagingSenderId: "PASTE_YOUR_MESSAGING_SENDER_ID_HERE",
-  appId:             "PASTE_YOUR_APP_ID_HERE"
+  apiKey: '',
+  authDomain: '',
+  databaseURL: '',
+  projectId: '',
+  storageBucket: '',
+  messagingSenderId: '',
+  appId: ''
 };
-
-// Set to true once you have filled in real values above
-var FIREBASE_ENABLED = false;
